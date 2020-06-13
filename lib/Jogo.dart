@@ -8,6 +8,13 @@ class Jogo extends StatefulWidget {
 }
 
 class _JogoState extends State<Jogo> {
+  bool valida = true;
+  int _countDerrota = 0;
+  int _countEmpate = 0;
+  int _countVitoria = 0;
+  double _height = 130;
+  Color _color = Colors.white;
+
   var _imagemApp = AssetImage('images/padrao.png');
   var _opcoes = ['pedra', 'papel', 'tesoura'];
   var _mensagem = 'Ecolha uma opção abaixo';
@@ -38,17 +45,26 @@ class _JogoState extends State<Jogo> {
         (escolhaUsuario == 'tesoura' && escolhaApp == 'papel') ||
         (escolhaUsuario == 'papel' && escolhaApp == 'pedra')) {
       setState(() {
-        this._mensagem = 'Parabêns, você está certo';
+        this._mensagem = 'Parabêns, você venceu';
+        _color= Colors.green;
+        _countVitoria = _countVitoria + 1;
+        _height = 100;
       });
     } else if ((escolhaApp == 'pedra' && escolhaUsuario == 'tesoura') ||
         (escolhaApp == 'tesoura' && escolhaUsuario == 'papel') ||
         (escolhaApp == 'papel' && escolhaUsuario == 'pedra')) {
       setState(() {
-        this._mensagem = 'Errrrrroooooouuuuu';
+        this._mensagem = 'Você perdeu';
+        _color= Colors.red;
+        _countDerrota = _countDerrota + 1;
+        _height = 100;
       });
     } else {
       setState(() {
         this._mensagem = 'Empate';
+        _color= Colors.white;
+        _countEmpate = _countEmpate + 1;
+        _height = 100;
       });
     }
   }
@@ -58,11 +74,25 @@ class _JogoState extends State<Jogo> {
     return Scaffold(
       appBar: AppBar(
         title: Text('JokenPo'),
-        backgroundColor: Colors.red,
+        backgroundColor: Colors.black,
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
+     // backgroundColor: _color,
+      body: Align(
+        child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
+          AnimatedContainer(
+            duration: Duration(seconds: 1),
+            width: double.infinity,
+            height: _height,
+            color: _color,
+            padding: EdgeInsets.only(top: 35, bottom: 10),
+            child: Text(
+               _mensagem,
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold),
+              ),
+          ), 
           Padding(
             padding: EdgeInsets.only(top: 32, bottom: 16),
             child: Text(
@@ -77,7 +107,7 @@ class _JogoState extends State<Jogo> {
           Padding(
             padding: EdgeInsets.only(top: 32, bottom: 16),
             child: Text(
-              _mensagem,
+              'Escolha do usuário',
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
@@ -102,10 +132,35 @@ class _JogoState extends State<Jogo> {
                   _opcaoSelecionada(_opcoes[2]);
                 },
                 child: Image.asset('images/tesoura.png', height: 95),
-              ),
+              )
             ],
-          )
+          ),
+          Padding(
+            padding: EdgeInsets.only(top: 32, bottom: 16),
+            child: Text(
+              'Vitórias : '+ _countVitoria.toString(),
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.only(top: 10, bottom: 16),
+            child: Text(
+              'Derrotas : ' + _countDerrota.toString(),
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.only(top: 10, bottom: 16),
+            child: Text(
+              'Empates : ' + _countEmpate.toString(),
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+          ),
         ],
+      ),
       ),
     );
   }
