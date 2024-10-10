@@ -18,7 +18,7 @@ class _BannerAdWidgetState extends State<BannerAdWidget> {
 
     _bannerAd = BannerAd(
       adUnitId: 'ca-app-pub-3940256099942544/6300978111',
-      size: AdSize.banner,
+      size: AdSize.fullBanner,
       listener: BannerAdListener(
         onAdLoaded: (_) {
           setState(() {
@@ -47,7 +47,7 @@ class _BannerAdWidgetState extends State<BannerAdWidget> {
     return _isAdLoaded
         ? Container(
             alignment: Alignment.center,
-            width: _bannerAd.size.width.toDouble(),
+            width: MediaQuery.sizeOf(context).width,
             height: _bannerAd.size.height.toDouble(),
             child: AdWidget(ad: _bannerAd),
           )

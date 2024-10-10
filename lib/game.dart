@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -41,24 +42,33 @@ class _GameState extends State<Game> {
   ];
 
   void _selectOption(String option) {
+    setState(() {
+      _image = const AssetImage('images/padrao.png');
+    });
+
     int randonNumber = Random().nextInt(_options.length);
     String appOption = _options[randonNumber];
 
     int resultNumber = getResult(option, appOption);
 
-    setState(() {
-      _image = AssetImage('images/$appOption.png');
-      _message = _finalMessage[resultNumber];
-      _color = _finalColor[resultNumber];
+    Timer(
+      const Duration(milliseconds: 200),
+      () => setState(
+        () {
+          _image = AssetImage('images/$appOption.png');
+          _message = _finalMessage[resultNumber];
+          _color = _finalColor[resultNumber];
 
-      if (resultNumber == 0) {
-        _victoryCount = ++_victoryCount;
-      } else if (resultNumber == 1) {
-        _defeatCount = ++_defeatCount;
-      } else {
-        _drawCount = ++_drawCount;
-      }
-    });
+          if (resultNumber == 0) {
+            _victoryCount = ++_victoryCount;
+          } else if (resultNumber == 1) {
+            _defeatCount = ++_defeatCount;
+          } else {
+            _drawCount = ++_drawCount;
+          }
+        },
+      ),
+    );
   }
 
   int getResult(String option, String appOption) {
@@ -87,6 +97,7 @@ class _GameState extends State<Game> {
         ),
         backgroundColor: Colors.black,
       ),
+      bottomNavigationBar: const BannerAdWidget(),
       body: Align(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -94,107 +105,132 @@ class _GameState extends State<Game> {
             AnimatedContainer(
               duration: const Duration(seconds: 1),
               width: double.infinity,
-              height: 130,
               color: _color,
-              padding: const EdgeInsets.only(
-                top: 35,
-                bottom: 10,
-              ),
-              child: Text(
-                _message,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 35,
-                  fontWeight: FontWeight.bold,
+              height: 80,
+              child: Center(
+                child: Text(
+                  _message,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),
-            const Padding(
-              padding: EdgeInsets.only(
-                top: 32,
-                bottom: 16,
-              ),
-              child: Text(
-                'Escolha do app',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
+            Column(
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 10, bottom: 10),
+                        child: Text(
+                          'Empates: ${_drawCount.toString()}',
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 10, bottom: 10),
+                        child: Text(
+                          'Derrotas: ${_defeatCount.toString()}',
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-            ),
-            Image(image: _image),
-            const Padding(
-              padding: EdgeInsets.only(
-                top: 32,
-                bottom: 16,
-              ),
-              child: Text(
-                'Escolha do usuário',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
-                GestureDetector(
-                  onTap: () {
-                    _selectOption(_options[0]);
-                  },
-                  child: Image.asset('images/pedra.png', height: 95),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    _selectOption(_options[1]);
-                  },
-                  child: Image.asset('images/papel.png', height: 95),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    _selectOption(_options[2]);
-                  },
-                  child: Image.asset('images/tesoura.png', height: 95),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 10, bottom: 10),
+                        child: Center(
+                          child: Text(
+                            'Vitórias: ${_victoryCount.toString()}',
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
-            Padding(
-              padding: const EdgeInsets.only(top: 32, bottom: 16),
-              child: Text(
-                'Vitórias: ${_victoryCount.toString()}',
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
+            Expanded(
+              child: Center(
+                child: Column(
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.only(
+                        top: 32,
+                        bottom: 16,
+                      ),
+                      child: Text(
+                        'Escolha do app',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    Image(image: _image),
+                    const Padding(
+                      padding: EdgeInsets.only(
+                        top: 32,
+                        bottom: 16,
+                      ),
+                      child: Text(
+                        'Escolha do usuário',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: <Widget>[
+                        GestureDetector(
+                          onTap: () {
+                            _selectOption(_options[0]);
+                          },
+                          child: Image.asset('images/pedra.png', height: 95),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            _selectOption(_options[1]);
+                          },
+                          child: Image.asset('images/papel.png', height: 95),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            _selectOption(_options[2]);
+                          },
+                          child: Image.asset('images/tesoura.png', height: 95),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.only(top: 10, bottom: 16),
-              child: Text(
-                'Derrotas: ${_defeatCount.toString()}',
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 10, bottom: 16),
-              child: Text(
-                'Empates: ${_drawCount.toString()}',
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            const BannerAdWidget(),
           ],
         ),
       ),
